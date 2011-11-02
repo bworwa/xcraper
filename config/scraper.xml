@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scraper>
+	<general>
+		<!--
+			The user agent used to identify yourself while doing requests
+		-->
+		<user_agent>XCraper/0.1</user_agent>
+		<!--
+			It is highly recommended that you leave UTF-8 as 'charset' when dealing with (X)HTML/XML documents
+
+			Supported charsets are: "utf8", "ascii"
+		-->
+		<charset>utf8</charset>
+	</general>
+	<xpath>
+		<!--
+			Just an example on how to retrieve the date of the last update in wikipedia's main page history
+			(check src/main.py)
+		-->
+		<queries hosts="en.wikipedia.org">
+			<query name="history" context="none">//ul[@id="pagehistory"]</query>
+			<query name="revision" context="history">/ul/li[1]</query>
+			<query name="date" context="revision" get_value="true">/li/a[1]</query>
+		</queries>
+	</xpath>
+</scraper>
