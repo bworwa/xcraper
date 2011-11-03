@@ -11,6 +11,7 @@ from time import time, localtime, mktime
 from socket import gaierror
 from httplib import HTTPException, NotConnected, InvalidURL, UnknownProtocol, UnknownTransferEncoding, UnimplementedFileMode, IncompleteRead, ImproperConnectionState, BadStatusLine
 from os.path import abspath, dirname
+from time import sleep
 
 # User defined
 from messages import Messages
@@ -31,7 +32,8 @@ class Scraper:
 			"utf8",
 			"ascii"
 		],
-		"charset" : None
+		"charset" : None,
+		"time_between_requests" : 1 # Seconds
 	}
 
 	messages = Messages()
@@ -460,11 +462,26 @@ class Scraper:
 
 			return False
 
+		# We try to get '/robots.txt' to see if we have clearance to access the url
+
+		if not self.request.knock(host, self.config["user_agent"], url):
+
+			# The host has explicitly specified that he doesn't want us to fetch this URL
+
+			self.messages.issue_warning(self.messages.ROBOT_FORBIDDEN % {
+				"host" : host,
+				"url" : url
+			})
+
+			return False
+
 		# We need to get the resource headers in order to attempt to know if the resource has been modified since 'last_update'
 		# And avoid a possible unnecessary GET request
 		#
 		# Since the header 'last-modified' is optional, in case it doesn't exist for any given resource (assuming a 2xx response code)
 		# We must force the visit to that resource
+
+		sleep(self.config["time_between_requests"])
 
 		try:
 
@@ -645,6 +662,8 @@ class Scraper:
 			if last_modified > float(last_update):
 
 				#URL needs to be updated
+
+				sleep(self.config["time_between_requests"])
 
 				try:
 
