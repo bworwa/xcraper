@@ -4,6 +4,7 @@
 # Native
 from httplib import HTTPConnection
 from urlparse import urlparse
+from robotparser import RobotFileParser
 
 # External
 from tidy import parseString
@@ -84,6 +85,24 @@ class Request:
 
 		self.current_charset = None
 
+	def knock(self, path_to_robot, user_agent, url):
+
+		# [Low] TODO: this is acting weird
+
+		robot = RobotFileParser()
+
+		robot.set_url(path_to_robot)
+
+		robot.read()
+
+		if robot.__str__().strip():
+
+			return robot.can_fetch(user_agent, url)
+
+		else:
+
+			return True
+
 	def make(self, url, request_type, user_agent, desired_charset):
 
 		"""
@@ -105,115 +124,123 @@ class Request:
 
 		parsed_url = urlparse(url, None, False)
 
+		scheme = parsed_url[0]
+
 		host = parsed_url[1]
 
 		path = parsed_url[2]
 
-		path_parameters = parsed_url[3]
+		if self.knock(scheme + "://" + host + "/robots.txt", user_agent, url):
 
-		query_string = parsed_url[4]
+			path_parameters = parsed_url[3]
 
-		if path_parameters:
+			query_string = parsed_url[4]
 
-			path_parameters = ";" + path_parameters
+			if path_parameters:
 
-		if query_string:
-			query_string = "?" + query_string
+				path_parameters = ";" + path_parameters
+
+			if query_string:
+				query_string = "?" + query_string
 			
-		# We create our HTTP connection instance (no request sent yet)
+			# We create our HTTP connection instance (no request sent yet)
 
-		connection = HTTPConnection(host, 80, False, 30)
+			connection = HTTPConnection(host, 80, False, 30)
 
-		# And make the request for the 'path + query' specified resource (request sent)
+			# And make the request for the 'path + query' specified resource (request sent)
 
-		connection.request(
-			request_type,
-			"/" + path + path_parameters + query_string,
-			None,
-			{ "User-Agent" : user_agent }
-		)
-
-		# We get the current response from the server (response code, headers, etc.)
-
-		response = connection.getresponse()
-
-		self.current_response_code = response.status
-
-		# We make our own dictionary of headers as it will be more easy and natural to consult
-
-		for header in response.getheaders():
-
-			self.current_headers[header[0]] = header[1]
-
-		# We verify the response code. If it wasn't a successful request (2xx) execution ends here
-
-		self.verify_response_code(connection)
-
-		# At this point we have made a successful request and start processing the resource's content (in case of a GET request)
-		# For HEAD requests execution ends here
-
-		try:
-
-			# We try to get the 'content-type' header in order to know the MIME-type of the resource
-
-			content_type_header = self.current_headers["content-type"].lower().split(";")
-
-			content_type_header = list(
-				fragment.strip() for fragment in content_type_header
+			connection.request(
+				request_type,
+				"/" + path + path_parameters + query_string,
+				None,
+				{ "User-Agent" : user_agent }
 			)
 
-			# We get the content type
+			# We get the current response from the server (response code, headers, etc.)
 
-			self.current_content_type = content_type_header[0]
+			response = connection.getresponse()
 
-		except KeyError:
+			self.current_response_code = response.status
 
-			# [Low] TODO
+			# We make our own dictionary of headers as it will be more easy and natural to consult
 
-			pass
+			for header in response.getheaders():
 
-		if request_type == self.GET and self.current_content_type in self.XML_MIME_TYPES:
+				self.current_headers[header[0]] = header[1]
 
-			# We get the content of the resource and strip it
+			# We verify the response code. If it wasn't a successful request (2xx) execution ends here
 
-			self.current_content = response.read().strip()
+			self.verify_response_code(connection)
+
+			# At this point we have made a successful request and start processing the resource's content (in case of a GET request)
+			# For HEAD requests execution ends here
 
 			try:
 
-				# We then try to get the resource's charset from the 'content-type' header	
+				# We try to get the 'content-type' header in order to know the MIME-type of the resource
 
-				self.current_charset = content_type_header[1]
+				content_type_header = self.current_headers["content-type"].lower().split(";")
 
-				for substring in ["charset=", "-"]:
+				content_type_header = list(
+					fragment.strip() for fragment in content_type_header
+				)
 
-					self.current_charset = self.current_charset.replace(substring, "")
+				# We get the content type
 
-				if self.current_charset == "iso88591":
+				self.current_content_type = content_type_header[0]
 
-					self.current_charset = "latin1"
+			except KeyError:
 
-			except IndexError:
+				# [Low] TODO
 
-				# There was no 'charset' defined in the 'content-type' header, we default to the specified 'desired_charset'.
-				# This could, and probably will, cause problems
+				pass
 
-				self.current_charset = desired_charset
+			if request_type == self.GET and self.current_content_type in self.XML_MIME_TYPES:
 
-			if not self.current_charset == desired_charset:
+				# We get the content of the resource and strip it
 
-				self.current_content = unicode(
-					self.current_content.decode(self.current_charset, "replace")
-				).encode(desired_charset, "ignore")
+				self.current_content = response.read().strip()
 
-			self.TIDY_OPTIONS["char_encoding"] = desired_charset
+				try:
 
-			# Finally we tidy up the (X)HTML/XML and it's ready to be parsed
+					# We then try to get the resource's charset from the 'content-type' header	
 
-			self.current_content = parseString(self.current_content, **self.TIDY_OPTIONS).__str__()		
+					self.current_charset = content_type_header[1]
 
-		# We close the connection and end the execution
+					for substring in ["charset=", "-"]:
 
-		connection.close()
+						self.current_charset = self.current_charset.replace(substring, "")
+
+					if self.current_charset == "iso88591":
+
+						self.current_charset = "latin1"
+
+				except IndexError:
+
+					# There was no 'charset' defined in the 'content-type' header, we default to the specified
+					# 'desired_charset'. This could, and probably will, cause problems
+
+					self.current_charset = desired_charset
+
+				if not self.current_charset == desired_charset:
+
+					self.current_content = unicode(
+						self.current_content.decode(self.current_charset, "replace")
+					).encode(desired_charset, "ignore")
+
+				self.TIDY_OPTIONS["char_encoding"] = desired_charset
+
+				# Finally we tidy up the (X)HTML/XML and it's ready to be parsed
+
+				self.current_content = parseString(self.current_content, **self.TIDY_OPTIONS).__str__()		
+
+			# We close the connection and end the execution
+
+			connection.close()
+
+		else:
+
+			raise ResponseCodeError(403)
 
 	def verify_response_code(self, connection):
 

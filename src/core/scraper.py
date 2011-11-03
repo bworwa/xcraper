@@ -16,9 +16,10 @@ from os.path import abspath, dirname
 from messages import Messages
 from helpers.validation import Validation
 from helpers.request import Request, ResponseCodeError
+from helpers.custom_xpath import Xpath
 
 # External
-import xpath
+from xpath import XPathNotImplementedError, XPathParseError, XPathTypeError, XPathUnknownFunctionError, XPathUnknownPrefixError, XPathUnknownVariableError
 
 class Scraper:
 
@@ -38,6 +39,8 @@ class Scraper:
 	validation = Validation()
 
 	request = Request()
+
+	xpath = Xpath()
 
 	def __init__(self):
 
@@ -352,39 +355,39 @@ class Scraper:
 
 					try:
 
-						xpath.find(query, sandbox)
+						self.xpath.find(query, sandbox, False, None, [])
 
-					except xpath.XPathNotImplementedError:
+					except XPathNotImplementedError:
 
 						self.messages.raise_error(self.messages.XPATH_FEATURE_NOT_IMPLEMENTED % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except xpath.XPathParseError:
+					except XPathParseError:
 
 						self.messages.raise_error(self.messages.XPATH_PARSE_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except xpath.XPathTypeError:
+					except XPathTypeError:
 
 						self.messages.raise_error(self.messages.XPATH_TYPE_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except xpath.XPathUnknownFunctionError:
+					except XPathUnknownFunctionError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_FUNCTION_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except xpath.XPathUnknownPrefixError:
+					except XPathUnknownPrefixError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_PREFIX_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except xpath.XPathUnknownVariableError:
+					except XPathUnknownVariableError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_VARIABLE_ERROR % {
 							"query" : query
@@ -777,11 +780,13 @@ class Scraper:
 
 						if not xpath_query["context"]:
 
-							xpath_result = xpath.find(xpath_query["query"], xpath_main_context)
-
-							for result in xpath_result:
-
-								xpath_query["result"].append(result)
+							self.xpath.find(
+								xpath_query["query"],
+								xpath_main_context,
+								xpath_query["get_value"],
+								self.config["charset"],
+								xpath_query["result"]
+							)
 
 						else:
 
@@ -795,22 +800,15 @@ class Scraper:
 
 							for context in xpath_context:
 
-								node = minidom.parseString(context.toxml(self.config["charset"]))
+								node = minidom.parseString(context)
 
-								if xpath_query["get_value"]:
-
-									xpath_result = xpath.findvalue(xpath_query["query"], node)
-
-									xpath_query["result"].append(xpath_result)
-
-								else:
-
-									xpath_result = xpath.find(xpath_query["query"], node)
-
-									for result in xpath_result:
-
-										xpath_query["result"].append(result)
-
+								self.xpath.find(
+									xpath_query["query"],
+									node,
+									xpath_query["get_value"],
+									self.config["charset"],
+									xpath_query["result"]
+								)
 
 						vars(self)[xpath_query["name"]] = xpath_query["result"]
 
