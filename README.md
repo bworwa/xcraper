@@ -40,19 +40,9 @@ Usage
 
                 * /helpers
 
-                    * __init__.py
-
-                    * custom_xpath.py
-
-                    * log.py
-
-                    * request.py
-
-                    * validation.py
-
                 * __init__.py
 
-                * messages.py (***Your code goes here***)
+                * messages.py (Your code goes here)
 
                 * scraper.py
 
