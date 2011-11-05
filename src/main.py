@@ -1,5 +1,5 @@
 
-# User defined
+# XCraper
 
 from core.scraper import Scraper
 

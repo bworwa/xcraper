@@ -33,7 +33,7 @@ class Xpath:
 
 			if xpath_result:
 
-				result_list.append(xpath_result.encode(charset))
+				result_list.append(xpath_result.strip().encode(charset))
 
 			else:
 
@@ -49,15 +49,15 @@ class Xpath:
 
 					if result.nodeType == 2:
 
-						result_list.append(result.value.encode(charset))
+						result_list.append(result.value.strip().encode(charset))
 
 					elif result.nodeType == 3 or result.nodeType == 4 or result.nodeType == 6 or result.nodeType == 7:
 
-						result_list.append(result.data.encode(charset))
+						result_list.append(result.data.strip().encode(charset))
 
 					else:
 
-						result_list.append(result.toxml().encode(charset))
+						result_list.append(result.toxml().strip().encode(charset))
 
 			else:
 

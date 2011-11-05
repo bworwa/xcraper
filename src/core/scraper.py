@@ -12,7 +12,7 @@ from socket import gaierror
 from httplib import HTTPException, NotConnected, InvalidURL, UnknownProtocol, UnknownTransferEncoding, UnimplementedFileMode, IncompleteRead, ImproperConnectionState, BadStatusLine
 from os.path import abspath, dirname
 
-# User defined
+# XCraper
 from messages import Messages
 from helpers.validation import Validation
 from helpers.request import Request, ResponseCodeError
