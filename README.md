@@ -42,11 +42,11 @@ Usage
 
                 * __init__.py
 
-                * messages.py (Your code goes here)
+                * messages.py
 
                 * scraper.py
 
-            * main.py
+            * main.py (Your code goes here)
 
 * Open `/directory/config/scraper.xml` and edit your XPath queries.
 
