@@ -31,7 +31,7 @@ class Xpath:
 
 			xpath_result = findvalue(query, context)
 
-			if xpath_result.strip():
+			if xpath_result:
 
 				result_list.append(xpath_result.strip().encode(charset))
 
