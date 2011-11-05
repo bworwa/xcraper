@@ -38,14 +38,6 @@ Usage
 
             * /core
 
-                * /helpers
-
-                * __init__.py
-
-                * messages.py
-
-                * scraper.py
-
             * main.py (Your code goes here)
 
 * Open `/directory/config/scraper.xml` and edit your XPath queries.
