@@ -42,17 +42,17 @@ Usage
 
 * Open `/directory/config/scraper.xml` and edit your XPath queries.
 
-  XPath queries are defined in the `queries` tag as a `query` tag. Each `query` tag must be defined as follows:
+    XPath queries are defined in the `queries` tag as a `query` tag. Each `query` tag must be defined as follows:
 
- `<query name="name" [context="context" get_value="bool"]>XPath query</query>`
+    `<query name="name" [context="context" get_value="bool"]>XPath query</query>`
 
     * `name` must be a valid and unique [Python identifier](http://docs.python.org/reference/lexical_analysis.html#identifiers "Python identifier"). This attribute is mandatory.
 
     * `context` must be a **previously defined** `name`. This attribute is optional and defines where the XPath query will be evaluated.
 
-     If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
+    If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
 
-     E.g:
+    E.g:
 
             <query name="a">//ul</query>
             <query name="b" context="a">/ul/li</query>
@@ -60,15 +60,15 @@ Usage
             'a' will return all the 'ul' elements found in the entire (X)HTML/XML document
             'b' will return all the 'li' elements found in the 'ul' elements returned by 'a'
 
-     All the results are treated like lists of nodes so if
+    All the results are treated like lists of nodes so if
 
             'a' returns ['<ul>...</ul>', '<ul>...</ul>', '<ul>...</ul>']
 
-     Then
+    Then
 
             'b' returns [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
 
-     Note that if no match if found, `None` will be returned in order to maintain the lists integrity.
+    Note that if no match if found, `None` will be returned in order to maintain the lists integrity.
 
     * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
 
