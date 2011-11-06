@@ -50,7 +50,7 @@ Usage
 
     * `context` must be a **previously defined** `name`. This attribute is optional and defines where the XPath query will be evaluated.
 
-    If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
+       If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
 
     E.g:
 
@@ -70,8 +70,7 @@ Usage
 
     Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
 
-
-    * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
+        * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
 
      E.g:
 
