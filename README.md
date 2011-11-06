@@ -29,30 +29,118 @@ Usage
 
     * /directory
 
-        * /config
+        * /config (*Your app. configuration files goes here*)
 
             * messages.xml
             * scraper.xml
 
         * /src
 
-            * /core
+            * /core (Don't edit this if you don't have to)
 
-            * main.py (Your code goes here)
+            * main.py (*Your code goes here*)
 
 * Open `/directory/config/scraper.xml` and edit your XPath queries.
 
-* Open `/directory/src/main.py` and start coding. From `core.scraper` import `Scraper`, create a new instance of `Scraper` and run it. This translates to:
+ XPath queries are defined in the `queries` tag as a `query` tag. Each `query` tag must be defined as follows:
 
-        from scraper.core import Scraper
+ `<query name="name" [context="context" get_value="bool"]>XPath query</query>`
+
+    * `name` must be a valid and unique [Python identifier](http://docs.python.org/reference/lexical_analysis.html#identifiers "Python identifier"). This attribute is mandatory.
+
+    * `context` must be a **previously defined** `name`. This attribute is optional and defines where the XPath query will be evaluated.
+
+     If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
+
+     E.g:
+
+            <query name="a">//ul</query>
+            <query name="b" context="a">/ul/li</query>
+
+            'a' will return all the 'ul' elements found in the entire (X)HTML/XML document
+            'b' will return all the 'li' elements found in the 'ul' elements returned by 'a'
+
+     All the results are treated like lists of nodes so if
+
+            'a' returns ['<ul>...</ul>', '<ul>...</ul>', '<ul>...</ul>']
+
+     Then
+
+            'b' returns [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
+
+     Note that if no match if found, `None` will be returned in order to maintain the lists integrity.
+
+    * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
+
+     E.g:
+
+            <query name="a">//ul</query>
+            <query name="b" context="a" get_value="true">/ul/li</query>
+
+            'b' returns [['item 1'], ['item 2', 'item 3'], [None]]
+
+            instead of
+
+            [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
+
+* Open `/directory/src/main.py` and start coding!. From `core.scraper` import `Scraper`, create a new instance of `Scraper` and run it. This translates to:
+
+        from core.scraper import Scraper
 
         scraper = Scraper()
 
         scraper.run(url[,timestamp])
 
-        # If a timestamp is provided, the GET request will not be sent if the
-        # HEAD response says that 'last-modified' < timestamp
-
         print scraper.myvar
 
-        # Where 'myvar' is the name of the query you specified in /directory/config/scraper.xml
+
+    `timestamp` is an optional parameter that tells the scraper to ignore `url` if the header `last-modified` is lower than `timestamp`. In this case, only a `HEAD` request will be made, skipping the `GET` request and saving you some time.
+
+    If no `timestamp` is specified, it is defaulted to `0` forcing the `GET` request.
+
+   `myvar` is the name of the query specified in `/directory/config/scraper.xml` and it'll contain the XPath query result.
+
+    So, assuming the following query
+
+        <query name="price" get_value="true">//span[@id='price']</query>
+
+    applied to an imaginary markup with a `<span id="price">$99.99</price>`,
+
+    If we print `scraper.price` we get `['$99.99']`
+
+Customization
+-------------
+
+You can add your own custom messages in `directory/config/messages.xml` or even replace the existing ones.
+
+To add a message simply add a new `message` tag inside the `messages` tag. Each message tag must have a `name` attribute, which behaves identically to the `name` attribute of the `query` tag.
+
+Then you can import `Messages` from `core.messages` and use your custom messages.
+
+E.g: (in `directory/config/messages.xml`) add
+
+    <message name="usr_input_error">Wrong input value '%(input_value)s'</message>
+
+And in your code
+
+    from core.messages import Message
+    
+    messages = Messages()
+
+    print messages.USR_INPUT_ERROR % { "input_value" : var }
+
+You can also raise errors and issue exceptions
+
+    messages.raise_error(msg[, section="scraper", log_it = True])
+
+    or
+
+    messages.issue_warning(msg[, section="scraper", log_it = True])
+
+Raising an error will stop the program's execution, issuing warnings won't.
+
+`msg` is just a `string` containing the error or warning explanation. 
+
+`section` is a `string` that defines in which sub-directory the error or warning will be logged. You can use `messages.SCRAPER` or `messages.INTERNAL` to log errors in the `scraper` or `internal` sub-directories respectively. Default section is `scraper`.
+
+`log_it` specifies whether the error should be logged or not. Default value is `True`.
