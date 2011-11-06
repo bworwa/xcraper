@@ -46,9 +46,9 @@ Usage
 
     `<query name="name" [context="context" get_value="bool"]>XPath query</query>`
 
-    * `name` must be a valid and unique [Python identifier](http://docs.python.org/reference/lexical_analysis.html#identifiers "Python identifier"). This attribute is mandatory.
+    `name` must be a valid and unique [Python identifier](http://docs.python.org/reference/lexical_analysis.html#identifiers "Python identifier"). This attribute is mandatory.
 
-    * `context` must be a **previously defined** `name`. This attribute is optional and defines where the XPath query will be evaluated.
+    `context` must be a **previously defined** `name`. This attribute is optional and defines where the XPath query will be evaluated.
 
        If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
 
@@ -69,8 +69,9 @@ Usage
             'b' returns [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
 
        Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
-
-    * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
+     
+     
+    `get_value` must be either `true` or `false` (default value is `false`). This attribute is optional and specifies whether to get the entire node or just the text value of the node.
 
        E.g:
 
@@ -98,7 +99,7 @@ Usage
 
     If no `timestamp` is specified, it is defaulted to `0` forcing the `GET` request.
 
-   `myvar` is the name of the query specified in `/directory/config/scraper.xml` and it'll contain the XPath query result.
+    `myvar` is the name of the query specified in `/directory/config/scraper.xml` and it'll contain the XPath query result.
 
     So, assuming the following query
 
@@ -123,7 +124,7 @@ E.g: (in `directory/config/messages.xml`) add
 
 And in your code
 
-        from core.messages import Message
+        from core.messages import Messages
     
         messages = Messages()
 
@@ -133,7 +134,7 @@ You can also raise errors and issue exceptions
 
         messages.raise_error(msg[, section="scraper", log_it = True])
 
-    or
+or
 
         messages.issue_warning(msg[, section="scraper", log_it = True])
 
@@ -144,3 +145,4 @@ Raising an error will stop the program's execution, issuing warnings won't.
 `section` is a `string` that defines in which sub-directory the error or warning will be logged. You can use `messages.SCRAPER` or `messages.INTERNAL` to log errors in the `scraper` or `internal` sub-directories respectively. Default section is `scraper`.
 
 `log_it` specifies whether the error should be logged or not. Default value is `True`.
+
