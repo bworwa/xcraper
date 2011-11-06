@@ -60,7 +60,7 @@ Usage
             'a' will return all the 'ul' elements found in the entire (X)HTML/XML document
             'b' will return all the 'li' elements found in the 'ul' elements returned by 'a'
 
-    All the results are treated like lists of nodes so if
+    All the results are treated like lists, so if
 
             'a' returns ['<ul>...</ul>', '<ul>...</ul>', '<ul>...</ul>']
 
@@ -68,7 +68,8 @@ Usage
 
             'b' returns [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
 
-    Note that if no match if found, `None` will be returned in order to maintain the lists integrity.
+    Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
+
 
     * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
 
