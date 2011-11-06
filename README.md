@@ -52,7 +52,7 @@ Usage
 
        If the attribute `context` is not present or it's value is `none`, the XPath query will be evaluated in the entire (X)HTML/XML document. Otherwise it'll be evaluated only in the resulting (X)HTML/XML node(s) of the specified context.
 
-    E.g:
+       E.g:
 
             <query name="a">//ul</query>
             <query name="b" context="a">/ul/li</query>
@@ -60,19 +60,19 @@ Usage
             'a' will return all the 'ul' elements found in the entire (X)HTML/XML document
             'b' will return all the 'li' elements found in the 'ul' elements returned by 'a'
 
-    All the results are treated like lists, so if
+       All the results are treated like lists, so if
 
             'a' returns ['<ul>...</ul>', '<ul>...</ul>', '<ul>...</ul>']
 
-    Then
+       Then
 
             'b' returns [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
 
-    Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
+       Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
 
-        * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
+    * `get_value` must be either `true` or `false` (default value is `false`). This specifies whether to get the entire node or just the text value of the node.
 
-     E.g:
+       E.g:
 
             <query name="a">//ul</query>
             <query name="b" context="a" get_value="true">/ul/li</query>
@@ -119,23 +119,23 @@ Then you can import `Messages` from `core.messages` and use your custom messages
 
 E.g: (in `directory/config/messages.xml`) add
 
-    <message name="usr_input_error">Wrong input value '%(input_value)s'</message>
+        <message name="usr_input_error">Wrong input value '%(input_value)s'</message>
 
 And in your code
 
-    from core.messages import Message
+        from core.messages import Message
     
-    messages = Messages()
+        messages = Messages()
 
-    print messages.USR_INPUT_ERROR % { "input_value" : var }
+        print messages.USR_INPUT_ERROR % { "input_value" : var }
 
 You can also raise errors and issue exceptions
 
-    messages.raise_error(msg[, section="scraper", log_it = True])
+        messages.raise_error(msg[, section="scraper", log_it = True])
 
     or
 
-    messages.issue_warning(msg[, section="scraper", log_it = True])
+        messages.issue_warning(msg[, section="scraper", log_it = True])
 
 Raising an error will stop the program's execution, issuing warnings won't.
 
