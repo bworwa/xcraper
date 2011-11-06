@@ -36,13 +36,13 @@ Usage
 
         * /src
 
-            * /core (Don't edit this if you don't have to)
+            * /core (*Don't edit this if you don't have to*)
 
             * main.py (*Your code goes here*)
 
 * Open `/directory/config/scraper.xml` and edit your XPath queries.
 
- XPath queries are defined in the `queries` tag as a `query` tag. Each `query` tag must be defined as follows:
+  XPath queries are defined in the `queries` tag as a `query` tag. Each `query` tag must be defined as follows:
 
  `<query name="name" [context="context" get_value="bool"]>XPath query</query>`
 
