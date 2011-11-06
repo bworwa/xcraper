@@ -8,7 +8,7 @@ from urlparse import urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler
 from email.utils import parsedate
 from time import time, localtime, mktime
-from socket import gaierror
+from socket import gaierror, timeout
 from httplib import HTTPException, NotConnected, InvalidURL, UnknownProtocol, UnknownTransferEncoding, UnimplementedFileMode, IncompleteRead, ImproperConnectionState, BadStatusLine
 from os.path import abspath, dirname
 
@@ -599,6 +599,16 @@ class Scraper:
 
 			return False
 
+		except timeout:
+
+			# Connection timed out
+
+			self.messages.issue_warning(self.messages.CONNECTION_TIMED_OUT % {
+				"url" : url
+			})
+
+			return False
+
 		except gaierror:
 
 			# Failed DNS server lookup, low level stuff.
@@ -780,6 +790,16 @@ class Scraper:
 
 					return False
 
+				except timeout:
+
+					# Connection timed out
+
+					self.messages.issue_warning(self.messages.CONNECTION_TIMED_OUT % {
+						"url" : url
+					})
+
+					return False
+
 				except gaierror:
 
 					# Failed DNS server lookup, low level stuff.
@@ -825,7 +845,7 @@ class Scraper:
 
 								if not context:
 
-									context = "<empty></empty>"
+									context = "<_/>"
 
 								node = minidom.parseString(context)
 

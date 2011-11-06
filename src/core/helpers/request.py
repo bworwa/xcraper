@@ -5,7 +5,7 @@
 from httplib import HTTPConnection, HTTPException
 from urlparse import urlparse
 from robotparser import RobotFileParser
-from socket import gaierror
+from socket import gaierror, timeout
 from time import sleep
 
 # External
@@ -55,7 +55,7 @@ class Request:
 
 	current_response_code = 0
 
-	current_content = "<empty></empty>"
+	current_content = "<_/>"
 
 	current_content_type = None
 
@@ -81,7 +81,7 @@ class Request:
 
 		self.current_response_code = 0
 
-		self.current_content = "<empty></empty>"
+		self.current_content = "<_/>"
 
 		self.current_content_type = None
 
@@ -103,7 +103,7 @@ class Request:
 
 			# We try to get the resource /robots.txt
 
-			connection = HTTPConnection(host, 80, False, 1)
+			connection = HTTPConnection(host, 80, False, 2)
 
 			connection.request(
 				self.GET,
@@ -140,6 +140,10 @@ class Request:
 
 			# A request error occurred. We just ignore /robots.txt and proceed
 
+			return True
+
+		except timeout:
+			print "a"
 			return True
 
 		except gaierror:
@@ -189,7 +193,7 @@ class Request:
 			
 		# We create our HTTP connection instance (no request sent yet)
 
-		connection = HTTPConnection(host, 80, False, 30)
+		connection = HTTPConnection(host, 80, False, 25)
 
 		# And make the request for the 'path + query' specified resource (request sent)
 
