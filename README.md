@@ -71,7 +71,7 @@ Usage
        Note that if no match is found, `None` will be returned in order to maintain the lists integrity.
      
      
-    `get_value` must be either `true` or `false` (default value is `false`). This attribute is optional and specifies whether to get the entire node or just the text value of the node.
+    `get_value` must be either `true` or `false` (default is `false`). This attribute is optional and specifies whether to get the entire node or just the text value of the node.
 
        E.g:
 
@@ -82,7 +82,7 @@ Usage
 
             instead of
 
-            [['<li>...</li>'], ['<li>...</li>', '<li>...</li>'], [None]]
+            [['<li>item 1</li>'], ['<li>item 2</li>', '<li>item 3</li>'], [None]]
 
 * Open `/directory/src/main.py` and start coding!. From `core.scraper` import `Scraper`, create a new instance of `Scraper` and run it. This translates to:
 
@@ -99,7 +99,7 @@ Usage
 
     If no `timestamp` is specified, it is defaulted to `0` forcing the `GET` request.
 
-    `myvar` is the name of the query specified in `/directory/config/scraper.xml` and it'll contain the XPath query result.
+    `myvar` is the `name` of the query specified in `/directory/config/scraper.xml` and it'll contain the XPath query result.
 
     So, assuming the following query
 
@@ -107,7 +107,7 @@ Usage
 
     applied to an imaginary markup with a `<span id="price">$99.99</price>`,
 
-    If we print `scraper.price` we get `['$99.99']`
+    if we print `scraper.price` we get `['$99.99']`
 
 Customization
 -------------
@@ -130,11 +130,11 @@ And in your code
 
         print messages.USR_INPUT_ERROR % { "input_value" : var }
 
-You can also raise errors and issue exceptions
+You can also raise errors 
 
         messages.raise_error(msg[, section="scraper", log_it = True])
 
-or
+and issue warnings
 
         messages.issue_warning(msg[, section="scraper", log_it = True])
 
@@ -142,7 +142,7 @@ Raising an error will stop the program's execution, issuing warnings won't.
 
 `msg` is just a `string` containing the error or warning explanation. 
 
-`section` is a `string` that defines in which sub-directory the error or warning will be logged. You can use `messages.SCRAPER` or `messages.INTERNAL` to log errors in the `scraper` or `internal` sub-directories respectively. Default section is `scraper`.
+`section` is a `string` that defines in which sub-directory of `/directory/logs` the error or warning will be logged. You can use `messages.SCRAPER` or `messages.INTERNAL` to log errors in the `scraper` or `internal` sub-directories respectively. Default section is `scraper`.
 
 `log_it` specifies whether the error should be logged or not. Default value is `True`.
 
