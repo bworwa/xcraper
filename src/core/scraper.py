@@ -268,6 +268,12 @@ class Scraper:
 							"path_to_xml" : self.config["path_to_config"]
 						}, self.messages.INTERNAL)
 
+					if xpath_query_name == "none":
+
+						self.messages.raise_error(self.messages.XPATH_NONE_NAME % {
+							"path_to_xml" : self.config["path_to_config"]
+						}, self.messages.INTERNAL)
+
 					# Because the attribute 'name' will later translate into a variable, it must be a valid identifier
 					# Therefore we validate the name
 
@@ -816,6 +822,10 @@ class Scraper:
 									break
 
 							for context in xpath_context:
+
+								if not context:
+
+									context = "<empty></empty>"
 
 								node = minidom.parseString(context)
 

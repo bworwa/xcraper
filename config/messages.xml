@@ -14,6 +14,7 @@
 	<!-- Configuration -->
 
 	<!-- XPath -->
+	<message name="xpath_none_name">'none' is not a valid XPath query name. Found in '%(path_to_xml)s'</message>
 	<message name="xpath_duplicated_query">Duplicated query '%(xpath_query_name)s' in '%(path_to_xml)s'</message>
 	<message name="xpath_context_not_defined">Query context '%(xpath_query_context)s' is not defined in '%(path_to_xml)s'</message>
 	<message name="xpath_feature_not_implemented">Query '%(query)s' uses features currently not supported</message>

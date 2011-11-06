@@ -3,8 +3,8 @@ XCraper
 
 Xcraper is a simple, lightweight, flexible and multi-purpose (X)HTML/XML Web scraper to be used in Python solutions.
 
-Requirements:
---------------------
+Requirements
+------------
 
 * Python 2.4+ (tested on 2.7.2+)
 
