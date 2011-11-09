@@ -61,6 +61,8 @@ class Request:
 
 	current_charset = None
 
+	crawl_delay = 1
+
 	def __init__(self):
 
 		# [Low] TODO
@@ -87,7 +89,9 @@ class Request:
 
 		self.current_charset = None
 
-	def knock(self, host, user_agent, url, time_to_sleep):
+		self.crawl_delay = 1
+
+	def knock(self, user_agent, url, retries = 0):
 
 		"""
 		Makes a request for '/robots.txt' and returns True if 'user_agent' can fetch 'url'. Returns False otherwise
@@ -95,15 +99,21 @@ class Request:
 		If we get a gaierror (DNS lookup error), this function will return False as everything else is doomed to fail
 		"""
 
+		host = urlparse(url)[1]
+
 		robot = RobotFileParser()
 
 		clearance = False
+
+		if retries > 0:
+
+			sleep(self.crawl_delay)
 
 		try:
 
 			# We try to get the resource /robots.txt
 
-			connection = HTTPConnection(host, 80, False, 2)
+			connection = HTTPConnection(host, 80)
 
 			connection.request(
 				self.GET,
@@ -118,41 +128,90 @@ class Request:
 
 				# If everthing went well, we feed the content of the resource to the parser
 
-				robot.parse(response.read().splitlines())
+				robot_lines = response.read().splitlines()
+
+				robot.parse(robot_lines)
 
 				# And resolve if we have clearance to fetch the url
 
 				clearance = robot.can_fetch(user_agent, url)
 
+				# We try to get the Crawl-delay directive, if it exists
+
+				try:
+
+					self.crawl_delay =  int(
+						"".join(list(
+							directive for directive in robot_lines if directive.lower().startswith("crawl-delay")
+						)).split(":")[1]
+					)
+
+				except IndexError:
+
+					# If no 'Crawl-delay' is specified, we leave it at 1 second
+
+					pass
+
+			elif response.status in [408, 500, 503]:
+
+				if retries < 3:
+
+					clearance = self.knock(host, user_agent, url, retries + 1)
+
+				else:
+
+					clearance = False
+
 			else:
 
-				# A 3xx, 4xx or 5xx error occurred. We just ignore /robots.txt and proceed
-
-				clearance = True
+				clearance = True			
 
 			connection.close()
 
-			sleep(time_to_sleep)
+			if retries < 1:
+
+				sleep(self.crawl_delay)
 
 			return clearance
 
 		except HTTPException:
 
-			# A request error occurred. We just ignore /robots.txt and proceed
+			# A request error occurred. We retry the request, if it fails we just ignore /robots.txt and proceed
 
-			return True
+			if retries < 3:
+
+				return self.knock(host, user_agent, url, retries + 1)
+
+			else:
+
+				return True
 
 		except timeout:
-			print "a"
-			return True
+
+			# Request timed out. We retry the request, if it fails we just ignore /robots.txt and proceed
+
+			if retries < 3:
+
+				return self.knock(host, user_agent, url, retries + 1)
+
+			else:
+
+				return True
 
 		except gaierror:
 
-			# DNS lookup error, most probably everything else will fail. Let's just end it here
+			# DNS lookup error, most probably everything else will fail. We retry the request, if it fails 
+			# Let's just end it here. This will generate a false positive about being blocked in /robots.txt
 
-			return False
+			if retries < 3:
 
-	def make(self, url, request_type, user_agent, desired_charset, time_to_sleep):
+				return self.knock(host, user_agent, url, retries + 1)
+
+			else:
+
+				return False
+
+	def make(self, url, request_type, user_agent, desired_charset):
 
 		"""
 		Makes a request for the resource identified by 'url' of the type 'request_type' (supported types are 'HEAD' and 'GET')
@@ -286,7 +345,7 @@ class Request:
 
 		connection.close()
 
-		sleep(time_to_sleep)
+		sleep(self.crawl_delay)
 
 	def verify_response_code(self, connection):
 

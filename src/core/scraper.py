@@ -31,8 +31,7 @@ class Scraper:
 			"utf8",
 			"ascii"
 		],
-		"charset" : None,
-		"time_between_requests" : 1 # Seconds
+		"charset" : None
 	}
 
 	messages = Messages()
@@ -436,6 +435,8 @@ class Scraper:
 		# At this point 'url' must be a valid URL
 		# However we revalidate it as this class is solution independent
 
+		url = url.strip().lower()
+
 		if not self.validation.validate_url(url):
 
 			# The URL is invalid. There's nothing to do, we skip the URL and move on to the next
@@ -448,7 +449,7 @@ class Scraper:
 
 		# We get the host out of the URL
 
-		host = urlparse(url.strip().lower())[1]
+		host = urlparse(url)[1]
 
 		try:
 
@@ -469,7 +470,7 @@ class Scraper:
 
 		# We try to get '/robots.txt' to see if we have clearance to access the url
 
-		if not self.request.knock(host, self.config["user_agent"], url, self.config["time_between_requests"]):
+		if not self.request.knock(self.config["user_agent"], url):
 
 			# The host has explicitly specified that he doesn't want us to fetch this URL
 
@@ -494,8 +495,7 @@ class Scraper:
 				url,
 				self.request.HEAD,
 				self.config["user_agent"],
-				self.config["charset"],
-				self.config["time_between_requests"]
+				self.config["charset"]
 			)
 
 		except ResponseCodeError as response_code:
@@ -685,8 +685,7 @@ class Scraper:
 						url,
 						self.request.GET,
 						self.config["user_agent"],
-						self.config["charset"],
-						self.config["time_between_requests"]
+						self.config["charset"]
 					)
 
 				except ResponseCodeError as response_code:
