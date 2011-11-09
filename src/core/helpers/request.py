@@ -124,7 +124,9 @@ class Request:
 
 			response = connection.getresponse()
 
-			if response.status == 200:
+			connection.close()
+
+			if response.status == 200:				
 
 				# If everthing went well, we feed the content of the resource to the parser
 
@@ -156,7 +158,7 @@ class Request:
 
 				if retries < 3:
 
-					clearance = self.knock(host, user_agent, url, retries + 1)
+					clearance = self.knock(user_agent, url, retries + 1)
 
 				else:
 
@@ -165,8 +167,6 @@ class Request:
 			else:
 
 				clearance = True			
-
-			connection.close()
 
 			if retries < 1:
 
@@ -180,7 +180,7 @@ class Request:
 
 			if retries < 3:
 
-				return self.knock(host, user_agent, url, retries + 1)
+				return self.knock(user_agent, url, retries + 1)
 
 			else:
 
@@ -192,24 +192,11 @@ class Request:
 
 			if retries < 3:
 
-				return self.knock(host, user_agent, url, retries + 1)
+				return self.knock(user_agent, url, retries + 1)
 
 			else:
 
 				return True
-
-		except gaierror:
-
-			# DNS lookup error, most probably everything else will fail. We retry the request, if it fails 
-			# Let's just end it here. This will generate a false positive about being blocked in /robots.txt
-
-			if retries < 3:
-
-				return self.knock(host, user_agent, url, retries + 1)
-
-			else:
-
-				return False
 
 	def make(self, url, request_type, user_agent, desired_charset):
 
@@ -267,6 +254,8 @@ class Request:
 
 		response = connection.getresponse()
 
+		connection.close()
+
 		self.current_response_code = response.status
 
 		# We make our own dictionary of headers as it will be more easy and natural to consult
@@ -277,7 +266,7 @@ class Request:
 
 		# We verify the response code. If it wasn't a successful request (2xx) execution ends here
 
-		self.verify_response_code(connection)
+		self.verify_response_code()
 
 		# At this point we have made a successful request and start processing the resource's content (in case of a GET request)
 		# For HEAD requests execution ends here
@@ -343,16 +332,12 @@ class Request:
 
 		# We close the connection and end the execution
 
-		connection.close()
-
 		sleep(self.crawl_delay)
 
-	def verify_response_code(self, connection):
+	def verify_response_code(self):
 
 		# According to http://docs.python.org/howto/urllib2.html#error-codes
 
 		if self.current_response_code > 299 and self.current_response_code < 600:
-
-			connection.close()
 
 			raise ResponseCodeError(self.current_response_code)

@@ -470,12 +470,24 @@ class Scraper:
 
 		# We try to get '/robots.txt' to see if we have clearance to access the url
 
-		if not self.request.knock(self.config["user_agent"], url):
+		try:
 
-			# The host has explicitly specified that he doesn't want us to fetch this URL
+			if not self.request.knock(self.config["user_agent"], url):
 
-			self.messages.issue_warning(self.messages.ROBOT_FORBIDDEN % {
-				"host" : host,
+				# The host has explicitly specified that he doesn't want us to fetch this URL
+
+				self.messages.issue_warning(self.messages.ROBOT_FORBIDDEN % {
+					"host" : host,
+					"url" : url
+				})
+
+				return False
+
+		except gaierror:
+
+			# A DNS lookup error ocurred, most probably everything else will fail. Let's just end it here
+
+			self.messages.issue_warning(self.messages.DNS_LOOKUP_FAILED % {
 				"url" : url
 			})
 
