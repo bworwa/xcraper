@@ -528,7 +528,7 @@ class Scraper:
 
 			# Socket was not open and failed to open a second time automatically
 
-			self.messages.raise_error(self.messages.NOT_CONNECTED % {
+			self.messages.issue_warning(self.messages.NOT_CONNECTED % {
 					"host" : host,
 					"url" : url
 			})
@@ -539,7 +539,7 @@ class Scraper:
 
 			# A port was given and was non-numeric or empty
 
-			self.messages.raise_error(self.messages.INVALID_URL % {
+			self.messages.issue_warning(self.messages.INVALID_URL % {
 				"url" : url
 			})
 
@@ -549,7 +549,7 @@ class Scraper:
 
 			# We got a protocol that wasn't HTTP/0.9, HTTP/1.0 or HTTP/1.1
 
-			self.messages.raise_error(self.messages.UNKNOWN_PROTOCOL % {
+			self.messages.issue_warning(self.messages.UNKNOWN_PROTOCOL % {
 				"url" : url
 			})
 
@@ -572,7 +572,7 @@ class Scraper:
 			# Either there was a synch problem or the socket was interrupted by a signal (resulting in a partial read)
 			# The content is corrupted and cannot be used
 
-			self.messages.raise_error(self.messages.INCOMPLETE_READ % {
+			self.messages.issue_warning(self.messages.INCOMPLETE_READ % {
 				"url" : url
 			})
 
@@ -585,7 +585,7 @@ class Scraper:
 			# 'ResponseNotReady' is raised when the server don't send back any headers or the socket is
 			# closed/interrupted while trying to read them
 
-			self.messages.raise_error(self.messages.REQUEST_FAILED % {
+			self.messages.issue_warning(self.messages.REQUEST_FAILED % {
 				"url" : url
 			})
 
@@ -595,7 +595,7 @@ class Scraper:
 
 			# The server responded with an unknown HTTP response code (< 100 || > 999)
 
-			self.messages.raise_error(self.messages.BAD_STATUS_LINE % {
+			self.messages.issue_warning(self.messages.BAD_STATUS_LINE % {
 				"url" : url
 			})
 
@@ -605,7 +605,7 @@ class Scraper:
 
 			# Any other unknown exception is caught here
 
-			self.messages.raise_error(self.messages.REQUEST_FAILED % {
+			self.messages.issue_warning(self.messages.REQUEST_FAILED % {
 				"url" : url
 			})
 
@@ -718,7 +718,7 @@ class Scraper:
 
 					# Socket was not open and failed to open a second time automatically
 
-					self.messages.raise_error(self.messages.NOT_CONNECTED % {
+					self.messages.issue_warning(self.messages.NOT_CONNECTED % {
 						"host" : host,
 						"url" : url
 					})
@@ -729,7 +729,7 @@ class Scraper:
 
 					# A port was given and was non-numeric or empty
 
-					self.messages.raise_error(self.messages.INVALID_URL % {
+					self.messages.issue_warning(self.messages.INVALID_URL % {
 						"url" : url
 					})
 
@@ -739,7 +739,7 @@ class Scraper:
 
 					# We got a protocol that wasn't HTTP/0.9, HTTP/1.0 or HTTP/1.1
 
-					self.messages.raise_error(self.messages.UNKNOWN_PROTOCOL % {
+					self.messages.issue_warning(self.messages.UNKNOWN_PROTOCOL % {
 						"url" : url
 					})
 
@@ -762,7 +762,7 @@ class Scraper:
 					# Either there was a synch problem or the socket was interrupted by a signal (resulting in a partial read)
 					# The content is corrupted and cannot be used
 
-					self.messages.raise_error(self.messages.INCOMPLETE_READ % {
+					self.messages.issue_warning(self.messages.INCOMPLETE_READ % {
 						"url" : url
 					})
 
@@ -775,7 +775,7 @@ class Scraper:
 					# 'ResponseNotReady' is raised when the server don't send back any headers or the socket is
 					# closed/interrupted while trying to read them
 
-					self.messages.raise_error(self.messages.REQUEST_FAILED % {
+					self.messages.issue_warning(self.messages.REQUEST_FAILED % {
 						"url" : url
 					})
 
@@ -785,7 +785,7 @@ class Scraper:
 
 					# The server responded with an unknown HTTP response code (< 100 || > 999)
 
-					self.messages.raise_error(self.messages.BAD_STATUS_LINE % {
+					self.messages.issue_warning(self.messages.BAD_STATUS_LINE % {
 						"url" : url
 					})
 
@@ -795,7 +795,7 @@ class Scraper:
 
 					# Any other unknown exception is caught here
 
-					self.messages.raise_error(self.messages.REQUEST_FAILED % {
+					self.messages.issue_warning(self.messages.REQUEST_FAILED % {
 						"url" : url
 					})
 
