@@ -435,7 +435,7 @@ class Scraper:
 		# At this point 'url' must be a valid URL
 		# However we revalidate it as this class is solution independent
 
-		url = url.strip().lower()
+		url = url.strip()
 
 		if not self.validation.validate_url(url):
 
