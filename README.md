@@ -134,9 +134,13 @@ You can also raise errors
 
         messages.raise_error(msg[, section="scraper", log_it = True])
 
-and issue warnings
+issue warnings
 
         messages.issue_warning(msg[, section="scraper", log_it = True])
+
+and inform
+
+        messages.inform(msg[, new_line = True, section="scraper", log_it = True])
 
 Raising an error will stop the program's execution, issuing warnings won't.
 
@@ -145,4 +149,6 @@ Raising an error will stop the program's execution, issuing warnings won't.
 `section` is a `string` that defines in which sub-directory of `/directory/logs` the error or warning will be logged. You can use `messages.SCRAPER` or `messages.INTERNAL` to log errors in the `scraper` or `internal` sub-directories respectively. Default section is `scraper`.
 
 `log_it` specifies whether the error should be logged or not. Default value is `True`.
+
+inform's `new_line` specifies if the message will end with a line break (`\n`). Default value is `True`.
 
