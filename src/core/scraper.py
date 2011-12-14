@@ -662,7 +662,7 @@ class Scraper:
 
 				# We transform the 9-tuple date into a UNIX timestamp
 
-				last_modified = mktime(last_modified) + (24 * 60 * 60)
+				last_modified = mktime(last_modified)
 
 			except OverflowError:
 
