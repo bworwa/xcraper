@@ -11,6 +11,12 @@
 			Supported charsets are: "utf8", "ascii"
 		-->
 		<charset>utf8</charset>
+		<!--
+			Console output?
+
+			Options: "true", "false"
+		-->
+		<debug>true</debug>
 	</general>
 	<xpath>
 		<!--
