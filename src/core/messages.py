@@ -76,7 +76,7 @@ class Messages:
 
 		try:
 
-			messages = dom.getElementsByTagName("messages")[0]
+			root = dom.getElementsByTagName("messages")[0]
 
 		except IndexError:
 
@@ -85,9 +85,9 @@ class Messages:
 				"path_to_xml" : self.config["path_to_config"]
 			}, self.INTERNAL)
 
-		debug = messages.getElementsByTagName("debug")
+		debug = root.getElementsByTagName("debug")
 
-		messages = messages.getElementsByTagName("message")
+		messages = root.getElementsByTagName("message")
 
 		# We 'poke' the variable debug[0] to see if there is a 'debug' tag defined in the XML configuration file
 
