@@ -7,6 +7,8 @@
 		<user_agent>XCraper/0.1 (https://github.com/bworwa/xcraper)</user_agent>
 		<!--
 			Override the sitemap authorization check?
+
+			Options: "true", "false"
 		-->
 		<override_sitemap>false</override_sitemap>
 		<!--
@@ -15,6 +17,13 @@
 			Supported charsets are: "utf8", "ascii"
 		-->
 		<charset>utf8</charset>
+		<!--
+			Console output? (useful for silent scraping)
+			NOTE: messages will still be logged
+
+			Options: "true", "false"
+		-->
+		<debug>true</debug>
 	</general>
 	<xpath>
 		<!--
