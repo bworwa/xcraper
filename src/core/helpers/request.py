@@ -91,7 +91,7 @@ class Request:
 
 		self.crawl_delay = 1
 
-	def knock(self, user_agent, url, override = False, retries = 0, debug_force_status = None):
+	def knock(self, user_agent, url, override, retries = 0, debug_force_status = None):
 
 		"""
 		Makes a request for '/robots.txt' and returns True if 'user_agent' can fetch 'url'. Returns False otherwise
@@ -138,7 +138,7 @@ class Request:
 
 				response.status = debug_force_status
 
-			if response.status == 200 and filter(None, robot_lines) != []:				
+			if response.status == 200 and filter(None, robot_lines) != []:
 
 				# If everthing went well, we feed the content of the resource to the parser
 

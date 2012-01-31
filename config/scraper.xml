@@ -6,6 +6,10 @@
 		-->
 		<user_agent>XCraper/0.1 (https://github.com/bworwa/xcraper)</user_agent>
 		<!--
+			Override the sitemap authorization check?
+		-->
+		<override_sitemap>false</override_sitemap>
+		<!--
 			It is highly recommended that you leave UTF-8 as 'charset' when dealing with (X)HTML/XML documents
 
 			Supported charsets are: "utf8", "ascii"
