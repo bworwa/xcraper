@@ -1,8 +1,7 @@
 
 """Core libraries, do not change"""
 
-# External
-from xpath import find, findvalues
+from ..modules import xpath_mod
 
 class Xpath:
 
@@ -29,7 +28,7 @@ class Xpath:
 
 		if get_value:
 
-			xpath_result = findvalues(query, context)
+			xpath_result = xpath_mod.findvalues(query, context)
 
 			if xpath_result:
 
@@ -43,7 +42,7 @@ class Xpath:
 
 		else:
 
-			xpath_result = find(query, context)
+			xpath_result = xpath_mod.find(query, context)
 
 			if xpath_result:
 

@@ -1,30 +1,20 @@
 
 """Core libraries, do not change"""
 
+from modules import common, net, time_mod, xpath_mod
+
 # Native
-from xml.dom import minidom
-from xml.parsers.expat import ExpatError
-from urlparse import urlparse
-from BaseHTTPServer import BaseHTTPRequestHandler
 from email.utils import parsedate
-from time import time, localtime, mktime
-from socket import gaierror, timeout
-from httplib import HTTPException, NotConnected, InvalidURL, UnknownProtocol, UnknownTransferEncoding, UnimplementedFileMode, IncompleteRead, ImproperConnectionState, BadStatusLine
-from os.path import abspath, dirname
 
 # XCraper
 from messages import Messages
-from helpers.validation import Validation
 from helpers.request import Request, ResponseCodeError
 from helpers.custom_xpath import Xpath
-
-# External
-from xpath import XPathNotImplementedError, XPathParseError, XPathTypeError, XPathUnknownFunctionError, XPathUnknownPrefixError, XPathUnknownVariableError
 
 class Scraper:
 
 	config = {
-		"path_to_config" : dirname(dirname(dirname(abspath(__file__)))) + "/config/scraper.xml",
+		"path_to_config" : common.dirname(common.dirname(common.dirname(common.abspath(__file__)))) + "/config/scraper.xml",
 		"xpath_queries" : {},
 		"user_agent" : None,
 		"override_sitemap" : False,
@@ -41,8 +31,6 @@ class Scraper:
 
 	messages = Messages()
 
-	validation = Validation()
-
 	request = Request()
 
 	xpath = Xpath()
@@ -58,17 +46,17 @@ class Scraper:
 
 			if debug_force_config_content:
 
-				dom = minidom.parseString(debug_force_config_content)
+				dom = common.minidom.parseString(debug_force_config_content)
 
 			else:
 
 				if debug_force_config_path:
 
-					dom = minidom.parse(debug_force_config_path)				
+					dom = common.minidom.parse(debug_force_config_path)				
 
 				else:
 
-					dom = minidom.parse(self.config["path_to_config"])
+					dom = common.minidom.parse(self.config["path_to_config"])
 
 		except IOError:
 
@@ -78,7 +66,7 @@ class Scraper:
 				"path_to_xml" : self.config["path_to_config"]
 			}, self.messages.INTERNAL)
 
-		except ExpatError:
+		except common.ExpatError:
 
 			# Invalid XML file, program halted
 
@@ -330,7 +318,7 @@ class Scraper:
 		#
 		# This is a controlled enviroment so there's no need to try:except it
 
-		sandbox = minidom.parseString("<sandbox>test</sandbox>")
+		sandbox = common.minidom.parseString("<sandbox>test</sandbox>")
 
 		for query in queries:
 
@@ -403,7 +391,7 @@ class Scraper:
 					# Because the attribute 'name' will later translate into a variable, it must be a valid identifier
 					# Therefore we validate the name
 
-					if not self.validation.validate_identifier(xpath_query_name):
+					if not self.messages.validation.validate_identifier(xpath_query_name):
 
 						# The name is not a valid Python identifier and will, most likely, cause problems later
 						# Program halted
@@ -490,37 +478,37 @@ class Scraper:
 
 						self.xpath.find(query, sandbox, False, None, [])
 
-					except XPathNotImplementedError:
+					except xpath_mod.XPathNotImplementedError:
 
 						self.messages.raise_error(self.messages.XPATH_FEATURE_NOT_IMPLEMENTED % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except XPathParseError:
+					except xpath_mod.XPathParseError:
 
 						self.messages.raise_error(self.messages.XPATH_PARSE_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except XPathTypeError:
+					except xpath_mod.XPathTypeError:
 
 						self.messages.raise_error(self.messages.XPATH_TYPE_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except XPathUnknownFunctionError:
+					except xpath_mod.XPathUnknownFunctionError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_FUNCTION_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except XPathUnknownPrefixError:
+					except xpath_mod.XPathUnknownPrefixError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_PREFIX_ERROR % {
 							"query" : query
 						}, self.messages.INTERNAL)
 
-					except XPathUnknownVariableError:
+					except xpath_mod.XPathUnknownVariableError:
 
 						self.messages.raise_error(self.messages.XPATH_UNKNOWN_VARIABLE_ERROR % {
 							"query" : query
@@ -564,7 +552,7 @@ class Scraper:
 
 		url = url.strip()
 
-		if not self.validation.validate_url(url):
+		if not self.messages.validation.validate_url(url):
 
 			# The URL is invalid. There's nothing to do, we skip the URL and move on to the next
 
@@ -576,7 +564,7 @@ class Scraper:
 
 		# We get the host out of the URL
 
-		host = urlparse(url)[1]
+		host = net.urlparse(url)[1]
 
 		try:
 
@@ -610,7 +598,7 @@ class Scraper:
 
 				return False
 
-		except gaierror:
+		except net.gaierror:
 
 			# A DNS lookup error ocurred, most probably everything else will fail. Let's just end it here
 
@@ -646,12 +634,12 @@ class Scraper:
 			self.messages.issue_warning(self.messages.RESPONSE_CODE_ERROR % {
 				"url" : url,
 				"code" : response_code,
-				"explanation" : BaseHTTPRequestHandler.responses[response_code][1]
+				"explanation" : net.BaseHTTPRequestHandler.responses[response_code][1]
 			})
 
 			return response_code
 
-		except NotConnected:
+		except net.NotConnected:
 
 			# Socket was not open and failed to open a second time automatically
 
@@ -662,7 +650,7 @@ class Scraper:
 
 			return False
 
-		except InvalidURL:
+		except net.InvalidURL:
 
 			# A port was given and was non-numeric or empty
 
@@ -672,7 +660,7 @@ class Scraper:
 
 			return False
 
-		except UnknownProtocol:
+		except net.UnknownProtocol:
 
 			# We got a protocol that wasn't HTTP/0.9, HTTP/1.0 or HTTP/1.1
 
@@ -682,19 +670,19 @@ class Scraper:
 
 			return False
 
-		except UnknownTransferEncoding:
+		except net.UnknownTransferEncoding:
 
 			# Currently not raised in httplib
 
 			return False
 
-		except UnimplementedFileMode:
+		except net.UnimplementedFileMode:
 
 			# Currently not raised in httplib
 
 			return False
 
-		except IncompleteRead:
+		except net.IncompleteRead:
 
 			# Either there was a synch problem or the socket was interrupted by a signal (resulting in a partial read)
 			# The content is corrupted and cannot be used
@@ -705,7 +693,7 @@ class Scraper:
 
 			return False
 
-		except ImproperConnectionState:
+		except net.ImproperConnectionState:
 
 			# Either 'CannotSendRequest', 'CannotSendHeader' or 'ResponseNotReady'
 			# Usually raised when doing multiple requests without reading responses between requests
@@ -718,7 +706,7 @@ class Scraper:
 
 			return False
 
-		except BadStatusLine:
+		except net.BadStatusLine:
 
 			# The server responded with an unknown HTTP response code (< 100 || > 999)
 
@@ -728,7 +716,7 @@ class Scraper:
 
 			return False
 
-		except HTTPException:
+		except net.HTTPException:
 
 			# Any other unknown exception is caught here
 
@@ -738,7 +726,7 @@ class Scraper:
 
 			return False
 
-		except timeout:
+		except net.timeout:
 
 			# Connection timed out
 
@@ -748,7 +736,7 @@ class Scraper:
 
 			return 408
 
-		except gaierror:
+		except net.gaierror:
 
 			# Failed DNS server lookup, low level stuff.
 
@@ -783,13 +771,13 @@ class Scraper:
 
 				# ... no problem! we use the local time as last-modified and add 24 hours to force the visit
 
-				last_modified = localtime(time() + (24 * 60 * 60))
+				last_modified = time_mod.localtime(time_mod.time() + (24 * 60 * 60))
 
 			try:
 
 				# We transform the 9-tuple date into a UNIX timestamp
 
-				last_modified = mktime(last_modified)
+				last_modified = time_mod.mktime(last_modified)
 
 			except OverflowError:
 
@@ -836,12 +824,12 @@ class Scraper:
 					self.messages.issue_warning(self.messages.RESPONSE_CODE_ERROR % {
 						"url" : url,
 						"code" : response_code,
-						"explanation" : BaseHTTPRequestHandler.responses[response_code][1]
+						"explanation" : net.BaseHTTPRequestHandler.responses[response_code][1]
 					})
 
 					return response_code
 
-				except NotConnected:
+				except net.NotConnected:
 
 					# Socket was not open and failed to open a second time automatically
 
@@ -852,7 +840,7 @@ class Scraper:
 
 					return False
 
-				except InvalidURL:
+				except net.InvalidURL:
 
 					# A port was given and was non-numeric or empty
 
@@ -862,7 +850,7 @@ class Scraper:
 
 					return False
 
-				except UnknownProtocol:
+				except net.UnknownProtocol:
 
 					# We got a protocol that wasn't HTTP/0.9, HTTP/1.0 or HTTP/1.1
 
@@ -872,19 +860,19 @@ class Scraper:
 
 					return False
 
-				except UnknownTransferEncoding:
+				except net.UnknownTransferEncoding:
 
 					# Currently not raised in httplib
 
 					return False
 
-				except UnimplementedFileMode:
+				except net.UnimplementedFileMode:
 
 					# Currently not raised in httplib
 
 					return False
 
-				except IncompleteRead:
+				except net.IncompleteRead:
 
 					# Either there was a synch problem or the socket was interrupted by a signal (resulting in a partial read)
 					# The content is corrupted and cannot be used
@@ -895,7 +883,7 @@ class Scraper:
 
 					return False
 
-				except ImproperConnectionState:
+				except net.ImproperConnectionState:
 
 					# Either 'CannotSendRequest', 'CannotSendHeader' or 'ResponseNotReady'
 					# Usually raised when doing multiple requests without reading responses between requests
@@ -908,7 +896,7 @@ class Scraper:
 
 					return False
 
-				except BadStatusLine:
+				except net.BadStatusLine:
 
 					# The server responded with an unknown HTTP response code (< 100 || > 999)
 
@@ -918,7 +906,7 @@ class Scraper:
 
 					return False
 
-				except HTTPException:
+				except net.HTTPException:
 
 					# Any other unknown exception is caught here
 
@@ -928,7 +916,7 @@ class Scraper:
 
 					return False
 
-				except timeout:
+				except net.timeout:
 
 					# Connection timed out
 
@@ -938,7 +926,7 @@ class Scraper:
 
 					return 408
 
-				except gaierror:
+				except net.gaierror:
 
 					# Failed DNS server lookup, low level stuff.
 
@@ -955,7 +943,7 @@ class Scraper:
 
 				if self.request.current_content_type in self.request.XML_MIME_TYPES:
 
-					xpath_main_context = minidom.parseString(self.request.current_content)
+					xpath_main_context = common.minidom.parseString(self.request.current_content)
 
 					for xpath_query in self.config["xpath_queries"][host]:
 
@@ -985,7 +973,7 @@ class Scraper:
 
 									context = "<_/>"
 
-								node = minidom.parseString(context)
+								node = common.minidom.parseString(context)
 
 								self.xpath.find(
 									xpath_query["query"],

@@ -1,16 +1,15 @@
 
 """Core libraries, do not change"""
 
+from modules import common
+
 # Native
-from xml.dom import minidom
-from xml.parsers.expat import ExpatError
 from sys import exit, stderr, stdout
 from string import whitespace
-from os.path import abspath, dirname
 
 # XCraper
-from helpers.validation import Validation
 from helpers.log import Log
+from helpers.validation import Validation
 
 class Messages:
 
@@ -32,7 +31,7 @@ class Messages:
 	SCRAPER = "scraper"
 
 	config = {
-		"path_to_config" : dirname(dirname(dirname(abspath(__file__)))) + "/config/messages.xml",
+		"path_to_config" : common.dirname(common.dirname(common.dirname(common.abspath(__file__)))) + "/config/messages.xml",
 		"debug" : False
 	}
 
@@ -50,17 +49,17 @@ class Messages:
 
 			if debug_force_messages_content:
 
-				dom = minidom.parseString(debug_force_messages_content)
+				dom = common.minidom.parseString(debug_force_messages_content)
 
 			else:
 
 				if debug_force_messages_path:
 
-					dom = minidom.parse(debug_force_messages_path)
+					dom = common.minidom.parse(debug_force_messages_path)
 
 				else:
 
-					dom = minidom.parse(self.config["path_to_config"])
+					dom = common.minidom.parse(self.config["path_to_config"])
 
 		except IOError:
 
@@ -68,7 +67,7 @@ class Messages:
 				"path_to_xml" : self.config["path_to_config"]
 			}, self.INTERNAL)
 
-		except ExpatError:
+		except common.ExpatError:
 
 			self.raise_error(self.INVALID_XML_FILE % {
 				"path_to_xml" : self.config["path_to_config"]

@@ -1,12 +1,10 @@
 
 """Core libraries, do not change"""
 
+from ..modules import net, time_mod
+
 # Native
-from httplib import HTTPConnection, HTTPException
-from urlparse import urlparse
 from robotparser import RobotFileParser
-from socket import gaierror, timeout
-from time import sleep
 
 # External
 from tidy import parseString
@@ -105,7 +103,7 @@ class Request:
 
 			return True
 
-		host = urlparse(url)[1]
+		host = net.urlparse(url)[1]
 
 		robot = RobotFileParser()
 
@@ -113,13 +111,13 @@ class Request:
 
 		if retries > 0:
 
-			sleep(self.crawl_delay)
+			time_mod.sleep(self.crawl_delay)
 
 		try:
 
 			# We try to get the resource /robots.txt
 
-			connection = HTTPConnection(host, 80)
+			connection = net.HTTPConnection(host, 80)
 
 			connection.request(
 				self.GET,
@@ -170,7 +168,7 @@ class Request:
 
 					try:
 
-						sleep(self.current_headers["retry-after"] - self.crawl_delay)
+						time_mod.sleep(self.current_headers["retry-after"] - self.crawl_delay)
 
 					except KeyError:
 
@@ -192,11 +190,11 @@ class Request:
 
 			if retries < 1:
 
-				sleep(self.crawl_delay)
+				time_mod.sleep(self.crawl_delay)
 
 			return clearance
 
-		except HTTPException:
+		except net.HTTPException:
 
 			# A request error occurred. We retry the request, if it fails we just ignore /robots.txt and proceed
 
@@ -208,7 +206,7 @@ class Request:
 
 				return True
 
-		except timeout:
+		except net.timeout:
 
 			# Request timed out. We retry the request, if it fails we just ignore /robots.txt and proceed
 
@@ -239,7 +237,7 @@ class Request:
 		# Then parse the URL and construct the 'path + query' string
 		# We discard the fragments as they are of no use (at least for synchronous requests)
 
-		parsed_url = urlparse(url, None, False)
+		parsed_url = net.urlparse(url, None, False)
 
 		scheme = parsed_url[0]
 
@@ -261,7 +259,7 @@ class Request:
 			
 		# We create our HTTP connection instance (no request sent yet)
 
-		connection = HTTPConnection(host, 80, False, 25)
+		connection = net.HTTPConnection(host, 80, False, 25)
 
 		# And make the request for the 'path + query' specified resource (request sent)
 
@@ -360,7 +358,7 @@ class Request:
 
 		# We close the connection and end the execution
 
-		sleep(self.crawl_delay)
+		time_mod.sleep(self.crawl_delay)
 
 	def verify_response_code(self):
 

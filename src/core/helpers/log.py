@@ -1,14 +1,11 @@
 
 """Core libraries, do not change"""
 
-# Native
-from datetime import date, datetime
-from os.path import dirname, abspath, exists
-from os import makedirs
+from ..modules import common, time_mod
 
 class Log:
 
-	BASE_PATH_TO_LOG = dirname(dirname(dirname(dirname(abspath(__file__))))) + "/logs"
+	BASE_PATH_TO_LOG = common.dirname(common.dirname(common.dirname(common.dirname(common.abspath(__file__))))) + "/logs"
 
 	current_path_to_log = None
 
@@ -35,11 +32,11 @@ class Log:
 
 			self.current_path_to_log = self.BASE_PATH_TO_LOG + "/" + section
 
-			if not exists(self.current_path_to_log):
+			if not common.exists(self.current_path_to_log):
 
-				makedirs(self.current_path_to_log)
+				common.makedirs(self.current_path_to_log)
 
-			now = datetime.now()
+			now = time_mod.datetime.now()
 
 			self.current_path_to_log = (self.current_path_to_log + "/%d-%d-%d.log") % (now.day, now.month, now.year)
 
