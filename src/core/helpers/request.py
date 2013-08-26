@@ -49,23 +49,9 @@ class Request:
 		"join_classes" : True
 	}
 
-	current_headers = {}
-
-	current_response_code = 0
-
-	current_content = "<_/>"
-
-	current_content_type = None
-
-	current_charset = None
-
-	crawl_delay = 1
-
 	def __init__(self):
 
-		# [Low] TODO
-
-		pass
+		self.clean_up()
 
 	def __del__(self):
 
@@ -75,7 +61,7 @@ class Request:
 
 	def clean_up(self):
 
-		"""Restarts all the class variables"""
+		"""Initializes/cleans up all the class variables"""
 
 		self.current_headers = {}
 
@@ -89,7 +75,7 @@ class Request:
 
 		self.crawl_delay = 1
 
-	def knock(self, user_agent, url, override, retries = 0, debug_force_status = None):
+	def knock(self, user_agent, url, override, retries=0, debug_force_status=None):
 
 		"""
 		Makes a request for '/robots.txt' and returns True if 'user_agent' can fetch 'url'. Returns False otherwise
@@ -150,7 +136,7 @@ class Request:
 
 				try:
 
-					self.crawl_delay =  int(
+					self.crawl_delay = int(
 						"".join(list(
 							directive for directive in robot_lines if directive.lower().startswith("crawl-delay")
 						)).split(":")[1]
@@ -218,7 +204,7 @@ class Request:
 
 				return True
 
-	def make(self, url, request_type, user_agent, desired_charset, debug_force_status = None):
+	def make(self, url, request_type, user_agent, desired_charset, debug_force_status=None):
 
 		"""
 		Makes a request for the resource identified by 'url' of the type 'request_type' (supported types are 'HEAD' and 'GET')

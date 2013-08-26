@@ -1,7 +1,7 @@
 
 """Core libraries, do not change"""
 
-#Native
+# Native
 from re import search, IGNORECASE
 from urlparse import urlparse
 

@@ -2,33 +2,33 @@
 <scraper>
 	<general>
 		<!--
-			The user agent used to identify yourself while doing requests
+		The user agent used to identify yourself while doing requests
 		-->
 		<user_agent>XCraper/0.1 (https://github.com/bworwa/xcraper)</user_agent>
 		<!--
-			Override the sitemap authorization check?
+		Override the sitemap authorization check?
 
-			Options: "true", "false"
+		Options: "true", "false"
 		-->
 		<override_sitemap>false</override_sitemap>
 		<!--
-			It is highly recommended that you leave UTF-8 as 'charset' when dealing with (X)HTML/XML documents
+		It is highly recommended that you leave UTF-8 as 'charset' when dealing with (X)HTML/XML documents
 
-			Supported charsets are: "utf8", "ascii"
+		Supported charsets are: "utf8", "ascii"
 		-->
 		<charset>utf8</charset>
 		<!--
-			Console output? (useful for silent scraping)
-			NOTE: messages will still be logged
+		Console output? (useful for silent scraping)
+		NOTE: messages will still be logged
 
-			Options: "true", "false"
+		Options: "true", "false"
 		-->
 		<debug>true</debug>
 	</general>
 	<xpath>
 		<!--
-			Just an example on how to retrieve the date of the last update in wikipedia's main page history
-			(check src/main.py)
+		Just an example on how to retrieve the date of the last update in wikipedia's main page history
+		(check src/main.py)
 		-->
 		<queries hosts="en.wikipedia.org">
 			<query name="history" context="none">//ul[@id="pagehistory"]</query>
